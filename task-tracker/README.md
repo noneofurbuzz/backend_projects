@@ -26,10 +26,10 @@ Each task contains:
 ## Installation
 ### Clone the repository
 ```bash
-git clone https://github.com/noneofurbuzz/task-tracker.git
+git clone https://github.com/noneofurbuzz/backend_projects.git
 
 # navigate to the project directory
-cd task-tracker
+cd backend_projects/task-tracker
 ```
 ### Install necessary dependecies
 ```bash
