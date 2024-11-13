@@ -1,0 +1,27 @@
+{
+  "name": "github-activity",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noneofurbuzz/github-activity.git"
+  },
+  "bugs": {
+    "url": "https://github.com/noneofurbuzz/github-activity/issues"
+  },
+  "homepage": "https://github.com/noneofurbuzz/github-activity#readme",
+  "keywords": [],
+  "author": "noneofurbuzz",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "commander": "^12.1.0"
+  },
+  "bin": {
+    "github-activity": "./bin/index.js"
+  }
+}
