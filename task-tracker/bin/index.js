@@ -28,7 +28,7 @@ program
     .name('task-cli')
     .description("A simple CLI tool to manage tasks")
     .version('1.0.0')
-program.configureOutput({
+/program.configureOutput({
     writeErr: (str) => {
         str = str.replace('error: ', chalk.red('Error: '));
         process.stderr.write(str)
