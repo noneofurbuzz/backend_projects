@@ -4,7 +4,6 @@ const fs = require('fs')
 const chalk = require('chalk')
 const {Command} = require('commander')
 const program = new Command();
-
 function writeFile(){
     fs.writeFileSync('tasks.json',"[]" ,(err) => {
         if (err) throw err}
