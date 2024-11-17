@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from 'fs'
+import chalk from 'chalk'
 import { program } from '@commander-js/extra-typings';
 
 type Properties = {
@@ -9,6 +10,7 @@ type Properties = {
     date: string
 }
 let jsonData: string = "[]"
+const green = '#4bb543'
 function writeFile(){
     fs.writeFile('expenses.json',jsonData,(err) => {
         if (err) throw err
@@ -45,8 +47,25 @@ program
         })
         jsonData = JSON.stringify(data)
         writeFile()
+        console.log(chalk.hex(green)(`Expense added successfully (ID: ${data.length})`))
 
     })
 program
+    .command('update')
+    .requiredOption('--id <id>','id of an expense',parseInt)
+    .requiredOption('--description <description>','description of an expense')
+    .requiredOption('--amount <amount>','amount of an expense',parseFloat)
+    .action((options) => {
+        let data: Properties[] = readFile()
+        data.map((properties) => {
+            if (properties.id === options.id){
+                properties.description = options.description
+                properties.amount = options.amount
+            }
+        })
+        jsonData = JSON.stringify(data)
+        writeFile()
+        console.log(chalk.hex(green)(`Expense updated successfully (ID: ${options.id})`))
+    })
+program
     .parse(process.argv)
-program.opts()
