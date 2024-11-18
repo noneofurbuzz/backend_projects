@@ -12,6 +12,10 @@ type Properties = {
     category: string
 }
 let jsonData: string = "[]"
+let categoriesData = `[{"name": "Food", "value":"Food"},
+{"name": "Transport", "value":"Transport"},
+{"name": "Entertainment", "value":"Entertainment"},
+{"name": "Previous", "value":"Previous"}]`
 const green = '#4bb543'
 function writeFile(){
     fs.writeFile('expenses.json',jsonData,(err) => {
@@ -29,6 +33,24 @@ function readFile(): Properties[]{
         
     }
 }
+function writeCategories(){
+    fs.writeFile('categories.json',categoriesData,(err) => {
+        if (err) throw err
+    })
+}
+function readCategories(): {name: string, value: string}[]{
+    if (fs.existsSync('categories.json')){
+        let categories = fs.readFileSync('categories.json','utf-8')
+        return JSON.parse(categories) 
+    }
+    else{
+        writeCategories()
+        return JSON.parse(categoriesData)
+        
+    }
+    
+}
+
 program
     .name('expense-tracker')
     .description('track your expenses')
@@ -66,15 +88,11 @@ program
             ]
         })
         if (answer === 1){
+            let parsedCategories = readCategories()
             const category = await select({
                 message: 'Browse possible categories',
-                choices: [
-                    {name: 'Food', value:'Food'},
-                    {name: 'Transport', value:'Transport'},
-                    {name: 'Entertainment', value:'Entertainment'},
-                    {name: 'Previous', value:'Previous'},
-
-                ]})
+                choices: parsedCategories
+                })
                 if(category !== "Previous"){
                     data = readFile()
                     data[data.length - 1].category = category
@@ -90,9 +108,13 @@ program
         else if (answer === 2){
             const category = await input({message: 'Enter the name of the new category:'})
             data = readFile()
-            data[data.length - 1].category = category.slice(0,1).toUpperCase()+category.slice(1,category.length)
+            data[data.length - 1].category = category.slice(0,1).toUpperCase()+category.slice(1,category.length).toLowerCase()
             jsonData = JSON.stringify(data)
             writeFile()
+            let parsedCategories = readCategories()
+            parsedCategories.splice(parsedCategories.length - 1,0,{"name":data[data.length - 1].category,"value":data[data.length - 1].category})
+            categoriesData = JSON.stringify(parsedCategories)
+            writeCategories()
             console.log(`\nCategory ${chalk.hex(green)(`"${data[data.length - 1].category}"`)} created and assigned to ID ${data.length}.`)
         }
         else{
