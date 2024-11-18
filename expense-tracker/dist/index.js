@@ -13,6 +13,10 @@ import chalk from 'chalk';
 import { select, input } from '@inquirer/prompts';
 import { program } from '@commander-js/extra-typings';
 let jsonData = "[]";
+let categoriesData = `[{"name": "Food", "value":"Food"},
+{"name": "Transport", "value":"Transport"},
+{"name": "Entertainment", "value":"Entertainment"},
+{"name": "Previous", "value":"Previous"}]`;
 const green = '#4bb543';
 function writeFile() {
     fs.writeFile('expenses.json', jsonData, (err) => {
@@ -30,13 +34,29 @@ function readFile() {
         return JSON.parse(jsonData);
     }
 }
+function writeCategories() {
+    fs.writeFile('categories.json', categoriesData, (err) => {
+        if (err)
+            throw err;
+    });
+}
+function readCategories() {
+    if (fs.existsSync('categories.json')) {
+        let categories = fs.readFileSync('categories.json', 'utf-8');
+        return JSON.parse(categories);
+    }
+    else {
+        writeCategories();
+        return JSON.parse(categoriesData);
+    }
+}
 program
     .name('expense-tracker')
     .description('track your expenses')
     .version('1.0.0');
 program
     .command('add')
-    .requiredOption('--description <description>', 'description of an expense', String)
+    .requiredOption('--description <description>', 'description of an expense')
     .requiredOption('--amount <amount>', 'amount of an expense', Number)
     .description('add an expense with a description and amount')
     .action((options) => {
@@ -67,14 +87,10 @@ program
                 ]
             });
             if (answer === 1) {
+                let parsedCategories = readCategories();
                 const category = yield select({
                     message: 'Browse possible categories',
-                    choices: [
-                        { name: 'Food', value: 'Food' },
-                        { name: 'Transport', value: 'Transport' },
-                        { name: 'Entertainment', value: 'Entertainment' },
-                        { name: 'Previous', value: 'Previous' },
-                    ]
+                    choices: parsedCategories
                 });
                 if (category !== "Previous") {
                     data = readFile();
@@ -90,9 +106,13 @@ program
             else if (answer === 2) {
                 const category = yield input({ message: 'Enter the name of the new category:' });
                 data = readFile();
-                data[data.length - 1].category = category.slice(0, 1).toUpperCase() + category.slice(1, category.length);
+                data[data.length - 1].category = category.slice(0, 1).toUpperCase() + category.slice(1, category.length).toLowerCase();
                 jsonData = JSON.stringify(data);
                 writeFile();
+                let parsedCategories = readCategories();
+                parsedCategories.splice(parsedCategories.length - 1, 0, { "name": data[data.length - 1].category, "value": data[data.length - 1].category });
+                categoriesData = JSON.stringify(parsedCategories);
+                writeCategories();
                 console.log(`\nCategory ${chalk.hex(green)(`"${data[data.length - 1].category}"`)} created and assigned to ID ${data.length}.`);
             }
             else {
