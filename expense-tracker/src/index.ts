@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs'
 import chalk from 'chalk'
+import {select,input} from '@inquirer/prompts'
 import { program } from '@commander-js/extra-typings';
 
 type Properties = {
@@ -8,6 +9,7 @@ type Properties = {
     description: string
     amount: number
     date: string
+    category: string
 }
 let jsonData: string = "[]"
 const green = '#4bb543'
@@ -47,12 +49,57 @@ program
             id: data.length+1,
             description: options.description,
             amount: options.amount,
-            date: new Date().toISOString().slice(0,10)
+            date: new Date().toISOString().slice(0,10),
+            category: ""
 
         })
         jsonData = JSON.stringify(data)
         writeFile()
-        console.log(chalk.hex(green)(`Expense added successfully (ID: ${data.length})`))
+        console.log(chalk.hex(green)(`Expense added successfully (ID: ${data.length})\n`))
+        async function addCategory(){
+            const answer = await select({
+            message: 'This expense has no category assigned. Would you like to assign one now?',
+            choices: [
+                {name: 'Choose from possible categories', value:1},
+                {name: 'Create a new category', value:2},
+                {name: 'Skip', value:3},
+            ]
+        })
+        if (answer === 1){
+            const category = await select({
+                message: 'Browse possible categories',
+                choices: [
+                    {name: 'Food', value:'Food'},
+                    {name: 'Transport', value:'Transport'},
+                    {name: 'Entertainment', value:'Entertainment'},
+                    {name: 'Previous', value:'Previous'},
+
+                ]})
+                if(category !== "Previous"){
+                    data = readFile()
+                    data[data.length - 1].category = category
+                    jsonData = JSON.stringify(data)
+                    writeFile()
+                    console.log(`\nCategory ${chalk.hex(green)(`"${category}"`)} created and assigned to ID ${data.length}.`)
+                }
+                else{
+                    addCategory()
+                }
+                
+        }
+        else if (answer === 2){
+            const category = await input({message: 'Enter the name of the new category:'})
+            data = readFile()
+            data[data.length - 1].category = category.slice(0,1).toUpperCase()+category.slice(1,category.length)
+            jsonData = JSON.stringify(data)
+            writeFile()
+            console.log(`\nCategory ${chalk.hex(green)(`"${data[data.length - 1].category}"`)} created and assigned to ID ${data.length}.`)
+        }
+        else{
+            return
+        }
+    }
+        addCategory()
     })
     .showHelpAfterError(chalk("Sample: expense-tracker add --description 'Lunch' --amount 20"))
 program
@@ -99,7 +146,7 @@ program
         if (str.startsWith("error: option '--id <id>' argument missing") ||str.startsWith("error: required option '--id <id>' not specified") ){
             write(chalk.red("Error: missing ID\nRun 'expense-tracker list' to view recorded expenses and their corresponding IDs"))
         }
-        else(write(str))
+        else{write(str)}
     }})
     .showHelpAfterError(chalk("Sample: expense-tracker update --id 1 --description 'Breakfast' --amount 30"))
 program.configureOutput({
