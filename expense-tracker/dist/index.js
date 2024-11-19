@@ -233,7 +233,7 @@ program
         }
     }
     if (!updateExpense) {
-        console.error(chalk.red(`Error: ID does not exist (ID: ${options.id})\nRun 'expense-tracker list' to view recorded expenses and their corresponding IDs`));
+        console.error(`${chalk.red(`Error: ID does not exist (ID: ${options.id})\n`)}Run 'expense-tracker list' to view recorded expenses and their corresponding IDSs`);
     }
 })
     .showHelpAfterError(chalk("Sample: expense-tracker update --id 1 --description 'Breakfast' --amount 30"));
@@ -253,7 +253,7 @@ program
             if (categories.length !== 0) {
                 for (let i = 0; i < categories.length; i = i + 1) {
                     categories[i].category = "";
-                    console.log(`ID ${categories[i].id} unassigned from category ${chalk.hex(green)(`"${options.delete}"`)}`);
+                    console.log(`ID ${categories[i].id} unassigned from category ${chalk.hex(green)(`"${categoryToUppercase}"`)}`);
                 }
             }
             categoriesData = JSON.stringify(categoriesJson);
@@ -271,6 +271,33 @@ program
     }
 })
     .showHelpAfterError(chalk("Sample: expense-tracker category --delete 'Food'"));
+program
+    .command('delete')
+    .requiredOption('--id <id>', 'id of expense to be deleted', Number)
+    .description('delete an expense')
+    .action((options) => {
+    let data = readFile();
+    if (isNaN(options.id)) {
+        console.error(chalk.red("Error: ID must be a number"));
+        console.error((chalk("Sample: expense-tracker delete --id 1")));
+        return;
+    }
+    else {
+        if (data.length < options.id) {
+            console.error(`${chalk.red(`Error: ID does not exist (ID: ${options.id})\n`)}Run 'expense-tracker list' to view recorded expenses and their corresponding IDSs`);
+        }
+        else {
+            data.splice(options.id - 1, 1);
+            for (let i = 1; i <= data.length; i = i + 1) {
+                data[i - 1].id = i;
+            }
+            jsonData = JSON.stringify(data);
+            writeFile();
+            console.log(chalk.hex(green)(`Expense successfully deleted.`));
+        }
+    }
+})
+    .showHelpAfterError(chalk("Sample: expense-tracker delete --id 1"));
 program.configureOutput({
     writeErr: (str) => {
         str = str.replace('error:', chalk.red('Error: '));
