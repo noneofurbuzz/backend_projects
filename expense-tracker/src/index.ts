@@ -14,8 +14,7 @@ type Properties = {
 let jsonData: string = "[]"
 let categoriesData = `[{"name": "Food", "value":"Food"},
 {"name": "Transport", "value":"Transport"},
-{"name": "Entertainment", "value":"Entertainment"},
-{"name": "Previous", "value":"Previous"}]`
+{"name": "Entertainment", "value":"Entertainment"}]`
 const green = '#4bb543'
 function writeFile(){
     fs.writeFile('expenses.json',jsonData,(err) => {
@@ -89,6 +88,7 @@ program
         })
         if (answer === 1){
             let parsedCategories = readCategories()
+            parsedCategories.push({"name": "Previous", "value":"Previous"})
             const category = await select({
                 message: 'Browse possible categories',
                 choices: parsedCategories
@@ -115,7 +115,7 @@ program
                 data[data.length - 1].category = categoryToUppercase
             jsonData = JSON.stringify(data)
             writeFile()
-                parsedCategories.splice(parsedCategories.length - 1,0,{"name":data[data.length - 1].category,"value":data[data.length - 1].category})
+                parsedCategories.push({"name":data[data.length - 1].category,"value":data[data.length - 1].category})
             categoriesData = JSON.stringify(parsedCategories)
             writeCategories()
             console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${data.length}.`)
@@ -131,12 +131,14 @@ program
     }
         addCategory()
     })
+    
     .showHelpAfterError(chalk("Sample: expense-tracker add --description 'Lunch' --amount 20"))
 program
     .command('update')
     .requiredOption('--id <id>','id of an expense',Number)
     .option('--description <description>','description of an expense')
     .option('--amount <amount>','amount of an expense',Number)
+    .description('update an expense with either a new description or amount')
     .action((options) => {
         let data: Properties[] = readFile()
         if (isNaN(options.id)){
@@ -182,13 +184,14 @@ program
                 }
                 else if (answer === 2){
                     let parsedCategories = readCategories()
+                    parsedCategories.push({"name": "Previous", "value":"Previous"})
                     const category = await select({
                 message: 'Browse possible categories',
                 choices: parsedCategories
                 })
                 if(category !== "Previous"){
                     data = readFile()
-                    data[data.length - 1].category = category
+                    data[options.id - 1].category = category
                     jsonData = JSON.stringify(data)
                     writeFile()
                     console.log(`\nCategory ${chalk.hex(green)(`"${category}"`)} assigned to ID ${options.id}.`)
@@ -204,10 +207,10 @@ program
             let categoryToUppercase = category.slice(0,1).toUpperCase()+category.slice(1,category.length).toLowerCase()
             let availableCategories = parsedCategories.find((categories) => categoryToUppercase === categories.name)
             if (availableCategories === undefined){
-                data[data.length - 1].category = categoryToUppercase
+                data[options.id - 1].category = categoryToUppercase
                 jsonData = JSON.stringify(data)
                 writeFile()
-            parsedCategories.splice(parsedCategories.length - 1,0,{"name":data[data.length - 1].category,"value":data[data.length - 1].category})
+            parsedCategories.push({"name":data[options.id - 1].category,"value":data[options.id - 1].category})
             categoriesData = JSON.stringify(parsedCategories)
             writeCategories()
             console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${options.id}.`)}
@@ -236,22 +239,52 @@ program
             
     
 })
-    .configureOutput({outputError(str, write) {
-        if (str.startsWith("error: option '--id <id>' argument missing") ||str.startsWith("error: required option '--id <id>' not specified") ){
-            write(chalk.red("Error: missing ID\nRun 'expense-tracker list' to view recorded expenses and their corresponding IDs"))
-        }
-        else{write(str)}
-    }})
+    
     .showHelpAfterError(chalk("Sample: expense-tracker update --id 1 --description 'Breakfast' --amount 30"))
-program.configureOutput({
-    outputError(str, write) {
-        if (str.startsWith("error: option '--description <description>' argument missing") || str.startsWith("error: option '--amount <amount>' argument missing") ||  str.startsWith("error: required option '--amount <amount>' not specified") || str.startsWith("error: required option '--description <description>' not specified")){
-            write(chalk.red('Error: missing description or amount\n'))
+program
+    .command('category')
+    .requiredOption('--delete <name>','name of category to be deleted')
+    .description('delete an existing category')
+    .action((options: {delete: string})=> {
+        let data = readFile()
+        let categoryToUppercase = options.delete.slice(0,1).toUpperCase()+options.delete.slice(1,options.delete.length).toLowerCase()
+        let categoriesJson = readCategories()
+        let deleteCategories = categoriesJson.findIndex((categories) => categories.name ===  categoryToUppercase)
+        if(options.delete !== ""){
+            if (deleteCategories !== -1){
+                categoriesJson.splice(deleteCategories,1)
+                let categories = data.filter((properties) => properties.category === categoryToUppercase)
+                if (categories.length !== 0){
+                    for (let i = 0; i < categories.length;i = i + 1){
+                        categories[i].category = ""
+                        console.log(`ID ${categories[i].id} unassigned from category ${chalk.hex(green)(`"${categoryToUppercase}"`)}`)
+                    }
+                    
+                }
+                categoriesData = JSON.stringify(categoriesJson)
+                jsonData = JSON.stringify(data)
+                writeFile()
+                writeCategories()
+                console.log(`Category ${chalk.hex(green)(`"${categoryToUppercase}"`)} deleted successfully.`)
+            }
+            else{
+                console.error(`${chalk.red(`Error: category "${categoryToUppercase}" does not exist\n`)}Run 'expense-tracker category-list' to view existing categories`)
+            }
         }
         else{
-            write(str)
+            console.error(`${chalk.red(`Error: no category entered\n`)}Sample: expense-tracker category --delete 'Food'`)
         }
+
+   
+    })
+    .showHelpAfterError(chalk("Sample: expense-tracker category --delete 'Food'"))
+program.configureOutput({
+    writeErr: (str) => {
+        str = str.replace('error:',chalk.red('Error: '))
+        process.stderr.write(str)
     }
 })
+
+
 program
     .parse(process.argv)
