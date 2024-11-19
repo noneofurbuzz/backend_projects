@@ -78,7 +78,7 @@ program
         jsonData = JSON.stringify(data)
         writeFile()
         console.log(chalk.hex(green)(`Expense added successfully (ID: ${data.length})\n`))
-        async function addCategory(){
+        async function addCategory(): Promise<void | undefined>{
             const answer = await select({
             message: 'This expense has no category assigned. Would you like to assign one now?',
             choices: [
@@ -98,7 +98,7 @@ program
                     data[data.length - 1].category = category
                     jsonData = JSON.stringify(data)
                     writeFile()
-                    console.log(`\nCategory ${chalk.hex(green)(`"${category}"`)} created and assigned to ID ${data.length}.`)
+                    console.log(`\nCategory ${chalk.hex(green)(`"${category}"`)} assigned to ID ${data.length}.`)
                 }
                 else{
                     addCategory()
@@ -108,14 +108,22 @@ program
         else if (answer === 2){
             const category = await input({message: 'Enter the name of the new category:'})
             data = readFile()
-            data[data.length - 1].category = category.slice(0,1).toUpperCase()+category.slice(1,category.length).toLowerCase()
+            let categoryToUppercase = category.slice(0,1).toUpperCase()+category.slice(1,category.length).toLowerCase()
+            let parsedCategories = readCategories()
+            let availableCategories = parsedCategories.find((categories) => categoryToUppercase === categories.name )
+            if (availableCategories === undefined){
+                data[data.length - 1].category = categoryToUppercase
             jsonData = JSON.stringify(data)
             writeFile()
-            let parsedCategories = readCategories()
-            parsedCategories.splice(parsedCategories.length - 1,0,{"name":data[data.length - 1].category,"value":data[data.length - 1].category})
+                parsedCategories.splice(parsedCategories.length - 1,0,{"name":data[data.length - 1].category,"value":data[data.length - 1].category})
             categoriesData = JSON.stringify(parsedCategories)
             writeCategories()
-            console.log(`\nCategory ${chalk.hex(green)(`"${data[data.length - 1].category}"`)} created and assigned to ID ${data.length}.`)
+            console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${data.length}.`)
+            }else{
+                console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`))
+                addCategory()
+            }
+            
         }
         else{
             return
@@ -158,12 +166,76 @@ program
                 jsonData = JSON.stringify(data)
             writeFile()
             console.log(chalk.hex(green)(`Expense updated successfully (ID: ${options.id})`))
+            
+            async function updateCategory(): Promise<void | undefined>{
+                const answer = await select({
+                    message: `Would you like to update the category for this expense? (category: ${updateExpense?.category === "" ? "no category assigned" : updateExpense?.category})`,
+                    choices: [{name: 'Keep the current category', value: 1},
+                             {name: 'Choose a different category', value: 2},
+                             {name: 'Create a new category', value: 3},
+                             {name: 'Remove category', value: 4},
+                            ]
+                }
+                )
+                if (answer === 1){
+                    return
+                }
+                else if (answer === 2){
+                    let parsedCategories = readCategories()
+                    const category = await select({
+                message: 'Browse possible categories',
+                choices: parsedCategories
+                })
+                if(category !== "Previous"){
+                    data = readFile()
+                    data[data.length - 1].category = category
+                    jsonData = JSON.stringify(data)
+                    writeFile()
+                    console.log(`\nCategory ${chalk.hex(green)(`"${category}"`)} assigned to ID ${options.id}.`)
+                }
+                else{
+                    updateCategory()
+                }
+            }
+            else if (answer === 3){
+            const category = await input({message: 'Enter the name of the new category:'})
+            data = readFile()
+            let parsedCategories = readCategories()
+            let categoryToUppercase = category.slice(0,1).toUpperCase()+category.slice(1,category.length).toLowerCase()
+            let availableCategories = parsedCategories.find((categories) => categoryToUppercase === categories.name)
+            if (availableCategories === undefined){
+                data[data.length - 1].category = categoryToUppercase
+                jsonData = JSON.stringify(data)
+                writeFile()
+            parsedCategories.splice(parsedCategories.length - 1,0,{"name":data[data.length - 1].category,"value":data[data.length - 1].category})
+            categoriesData = JSON.stringify(parsedCategories)
+            writeCategories()
+            console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${options.id}.`)}
+            else{
+                console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`))
+                updateCategory()
+            }
+            }
+            else {
+                data = readFile()
+                let removeCategory = data.find((properties) => properties.id === options.id)
+                let previousCategory = removeCategory?.category
+                if (removeCategory){
+                    removeCategory.category = ""
+                }
+                jsonData = JSON.stringify(data)
+                writeFile()
+                console.log(`\n${previousCategory === "" ? `${chalk.red(`ID ${options.id} is not assigned to a category`)}` : `ID ${options.id} removed from category ${chalk.hex(green)(`"${previousCategory}"`)}`}`)
             }
         }
+        updateCategory()
+    }}
         if (!updateExpense){
             console.error(chalk.red(`Error: ID does not exist (ID: ${options.id})\nRun 'expense-tracker list' to view recorded expenses and their corresponding IDs`))
         }
-    })
+            
+    
+})
     .configureOutput({outputError(str, write) {
         if (str.startsWith("error: option '--id <id>' argument missing") ||str.startsWith("error: required option '--id <id>' not specified") ){
             write(chalk.red("Error: missing ID\nRun 'expense-tracker list' to view recorded expenses and their corresponding IDs"))
