@@ -437,6 +437,22 @@ program
         list()
     })
     .showHelpAfterError(chalk(`Sample: expense-tracker list --year ${new Date().getFullYear()}`))
+program
+    .command('category-list')
+    .description('list categories')
+    .action(() => {
+        let parsedCategories = readCategories()
+        if (parsedCategories.length !== 0){
+            console.log('Existing categories: ')
+            for (let i = 0; i < parsedCategories.length;i = i + 1){
+                console.log(`${i+1}. ${parsedCategories[i].name}`)
+            }
+        }
+        else{
+            console.error('No categories exist')
+        }
+    })
+    .showHelpAfterError(`Sample: expense-tracker category-list`)
 program.configureOutput({
     writeErr: (str) => {
         str = str.replace('error:',chalk.red('Error: '))
