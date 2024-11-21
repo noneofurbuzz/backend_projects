@@ -10,8 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import fs from 'fs';
 import chalk from 'chalk';
-import { select, input } from '@inquirer/prompts';
+import { select, input, Separator } from '@inquirer/prompts';
 import { program } from '@commander-js/extra-typings';
+import Table from 'cli-table3';
 let jsonData = "[]";
 let categoriesData = `[{"name": "Food", "value":"Food"},
 {"name": "Transport", "value":"Transport"},
@@ -298,6 +299,132 @@ program
     }
 })
     .showHelpAfterError(chalk("Sample: expense-tracker delete --id 1"));
+program
+    .command('list')
+    .description('list expenses')
+    .option('--year <year>', 'the specific year to get the list of expenses')
+    .action((option) => {
+    function list() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const date = new Date();
+            let year = date.getFullYear().toString();
+            if (option.year !== undefined) {
+                if (option.year.length === 4) {
+                    if (parseInt(option.year) > parseInt(year)) {
+                        console.error(chalk.red(`Error: current year exceeded`));
+                        return;
+                    }
+                    year = option.year;
+                }
+                else {
+                    console.error(chalk.red('Error: invalid year'));
+                    console.error('Please enter a valid year.');
+                    return;
+                }
+            }
+            let data = readFile();
+            if (data.length === 0) {
+                console.error('There are no expenses yet. Use add [options] to add a new expense.');
+                console.error(("Sample: expense-tracker add --description 'Lunch' --amount 20"));
+                return;
+            }
+            var table = new Table({
+                head: [chalk.blue('ID'), chalk.blue('Date'), chalk.blue('Description'), chalk.blue('Amount'), chalk.blue('Category')]
+            });
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            let listOptions = yield select({
+                message: `Would you like to filter the list of expenses?`,
+                choices: [{ name: "No, show all expenses", value: 1 }, { name: "Filter by month", value: 2 }, { name: "Filter by category", value: 3 }, { name: "Filter by both", value: 4 }, new Separator(`${option.year === undefined ? `\n(NB: this gets the list of expenses for only the current year. If you would like to get for a specific year then run 'expense-tracker list --year <year>')` : " "}`)]
+            });
+            if (listOptions === 1) {
+                for (let i = 0; i < data.length; i = i + 1) {
+                    if (data[i].date.includes(`${year}-`)) {
+                        table.push([data[i].id, data[i].date, data[i].description, data[i].amount, data[i].category]);
+                    }
+                }
+                if (table.length === 0) {
+                    console.log(`No expenses recorded (year: ${year})`);
+                }
+                else {
+                    console.log(table.toString());
+                }
+            }
+            else if (listOptions === 2) {
+                let month = yield input({ message: 'Enter the month number (e.g., 11 for November):' });
+                if (parseInt(month) > 12 || isNaN(parseInt(month))) {
+                    console.error(chalk.red('Error: no such month exists'));
+                    console.error('Please enter a valid month.');
+                    return;
+                }
+                if (month.length === 1) {
+                    month = "0" + month;
+                }
+                for (let i = 0; i < data.length; i = i + 1) {
+                    if (data[i].date.includes(`${year}-${month}-`)) {
+                        table.push([data[i].id, data[i].date, data[i].description, data[i].amount, data[i].category]);
+                    }
+                }
+                if (table.length !== 0) {
+                    console.log(table.toString());
+                }
+                else {
+                    console.error(`No expenses recorded for the month of ${months[parseInt(month) - 1]} (year: ${year})`);
+                }
+            }
+            else if (listOptions === 3) {
+                let parsedCategories = readCategories();
+                const category = yield select({
+                    message: 'Select a category:',
+                    choices: parsedCategories
+                });
+                for (let i = 0; i < data.length; i = i + 1) {
+                    if (data[i].date.includes((`${year}-`))) {
+                        if (data[i].category === category) {
+                            table.push([data[i].id, data[i].date, data[i].description, data[i].amount, data[i].category]);
+                        }
+                    }
+                }
+                if (table.length !== 0) {
+                    console.log(table.toString());
+                }
+                else {
+                    console.error(`No expenses exist in category - ${category} (year: ${year})`);
+                }
+            }
+            if (listOptions === 4) {
+                let month = yield input({ message: 'Enter the month number (e.g., 11 for November):' });
+                if (parseInt(month) > 12 || isNaN(parseInt(month))) {
+                    console.error(chalk.red('Error: no such month exists'));
+                    console.error('Please enter a valid month.');
+                    return;
+                }
+                if (month.length === 1) {
+                    month = "0" + month;
+                }
+                let parsedCategories = readCategories();
+                const category = yield select({
+                    message: 'Select a category:',
+                    choices: parsedCategories
+                });
+                for (let i = 0; i < data.length; i = i + 1) {
+                    if (data[i].date.includes((`${year}-${month}-`))) {
+                        if (data[i].category === category) {
+                            table.push([data[i].id, data[i].date, data[i].description, data[i].amount, data[i].category]);
+                        }
+                    }
+                }
+                if (table.length !== 0) {
+                    console.log(table.toString());
+                }
+                else {
+                    console.error(`No expenses exist in category - ${category} for the month of ${months[parseInt(month) - 1]} (year: ${year})`);
+                }
+            }
+        });
+    }
+    list();
+})
+    .showHelpAfterError(chalk(`Sample: expense-tracker list --year ${new Date().getFullYear()}`));
 program.configureOutput({
     writeErr: (str) => {
         str = str.replace('error:', chalk.red('Error: '));
