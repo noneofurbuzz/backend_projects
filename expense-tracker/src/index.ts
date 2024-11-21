@@ -72,7 +72,7 @@ program
             description: options.description,
             amount: options.amount,
             date: new Date().toISOString().slice(0,10),
-            category: ""
+            category: "-"
 
         })
         jsonData = JSON.stringify(data)
@@ -172,7 +172,7 @@ program
             
             async function updateCategory(): Promise<void | undefined>{
                 const answer = await select({
-                    message: `Would you like to update the category for this expense? (category: ${updateExpense?.category === "" ? "no category assigned" : updateExpense?.category})`,
+                    message: `Would you like to update the category for this expense? (category: ${updateExpense?.category === "-" ? "no category assigned" : updateExpense?.category})`,
                     choices: [{name: 'Keep the current category', value: 1},
                              {name: 'Choose a different category', value: 2},
                              {name: 'Create a new category', value: 3},
@@ -225,11 +225,11 @@ program
                 let removeCategory = data.find((properties) => properties.id === options.id)
                 let previousCategory = removeCategory?.category
                 if (removeCategory){
-                    removeCategory.category = ""
+                    removeCategory.category = "-"
                 }
                 jsonData = JSON.stringify(data)
                 writeFile()
-                console.log(`\n${previousCategory === "" ? `${chalk.red(`ID ${options.id} is not assigned to a category`)}` : `ID ${options.id} removed from category ${chalk.hex(green)(`"${previousCategory}"`)}`}`)
+                console.log(`\n${previousCategory === "-" ? `${chalk.red(`ID ${options.id} is not assigned to a category`)}` : `ID ${options.id} removed from category ${chalk.hex(green)(`"${previousCategory}"`)}`}`)
             }
         }
         updateCategory()
@@ -257,7 +257,7 @@ program
                 let categories = data.filter((properties) => properties.category === categoryToUppercase)
                 if (categories.length !== 0){
                     for (let i = 0; i < categories.length;i = i + 1){
-                        categories[i].category = ""
+                        categories[i].category = "-"
                         console.log(`ID ${categories[i].id} unassigned from category ${chalk.hex(green)(`"${categoryToUppercase}"`)}`)
                     }
                     
@@ -266,7 +266,7 @@ program
                 jsonData = JSON.stringify(data)
                 writeFile()
                 writeCategories()
-                console.log(`Category ${chalk.hex(green)(`"${categoryToUppercase}"`)} deleted successfully.`)
+                console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} deleted successfully.`)
             }
             else{
                 console.error(`${chalk.red(`Error: category "${categoryToUppercase}" does not exist\n`)}Run 'expense-tracker category-list' to view existing categories`)
@@ -400,7 +400,7 @@ program
                 console.log(table.toString())
             }
             else{
-                console.error(`No expenses exist in category - ${category} (year: ${year})`)
+                console.error(`\nNo expenses exist in category ${chalk.red(`"${category}"`)} (year: ${year})`)
             }
             
         }
@@ -430,7 +430,7 @@ program
                 console.log(table.toString())
             }
             else{
-                console.error(`No expenses exist in category - ${category} for the month of ${months[parseInt(month)-1]} (year: ${year})`)
+                console.error(`\nNo expenses exist in category  ${chalk.red(`"${category}"`)} for the month of ${months[parseInt(month)-1]} (year: ${year})`)
             }
         }
         }

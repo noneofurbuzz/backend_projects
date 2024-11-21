@@ -71,7 +71,7 @@ program
         description: options.description,
         amount: options.amount,
         date: new Date().toISOString().slice(0, 10),
-        category: ""
+        category: "-"
     });
     jsonData = JSON.stringify(data);
     writeFile();
@@ -169,7 +169,7 @@ program
             function updateCategory() {
                 return __awaiter(this, void 0, void 0, function* () {
                     const answer = yield select({
-                        message: `Would you like to update the category for this expense? (category: ${(updateExpense === null || updateExpense === void 0 ? void 0 : updateExpense.category) === "" ? "no category assigned" : updateExpense === null || updateExpense === void 0 ? void 0 : updateExpense.category})`,
+                        message: `Would you like to update the category for this expense? (category: ${(updateExpense === null || updateExpense === void 0 ? void 0 : updateExpense.category) === "-" ? "no category assigned" : updateExpense === null || updateExpense === void 0 ? void 0 : updateExpense.category})`,
                         choices: [{ name: 'Keep the current category', value: 1 },
                             { name: 'Choose a different category', value: 2 },
                             { name: 'Create a new category', value: 3 },
@@ -222,11 +222,11 @@ program
                         let removeCategory = data.find((properties) => properties.id === options.id);
                         let previousCategory = removeCategory === null || removeCategory === void 0 ? void 0 : removeCategory.category;
                         if (removeCategory) {
-                            removeCategory.category = "";
+                            removeCategory.category = "-";
                         }
                         jsonData = JSON.stringify(data);
                         writeFile();
-                        console.log(`\n${previousCategory === "" ? `${chalk.red(`ID ${options.id} is not assigned to a category`)}` : `ID ${options.id} removed from category ${chalk.hex(green)(`"${previousCategory}"`)}`}`);
+                        console.log(`\n${previousCategory === "-" ? `${chalk.red(`ID ${options.id} is not assigned to a category`)}` : `ID ${options.id} removed from category ${chalk.hex(green)(`"${previousCategory}"`)}`}`);
                     }
                 });
             }
@@ -240,38 +240,38 @@ program
     .showHelpAfterError(chalk("Sample: expense-tracker update --id 1 --description 'Breakfast' --amount 30"));
 program
     .command('category')
-    .requiredOption('--delete <name>', 'name of category to be deleted')
+    .requiredOption('--delete', 'name of category to be deleted')
     .description('delete an existing category')
-    .action((options) => {
-    let data = readFile();
-    let categoryToUppercase = options.delete.slice(0, 1).toUpperCase() + options.delete.slice(1, options.delete.length).toLowerCase();
-    let categoriesJson = readCategories();
-    let deleteCategories = categoriesJson.findIndex((categories) => categories.name === categoryToUppercase);
-    if (options.delete !== "") {
-        if (deleteCategories !== -1) {
-            categoriesJson.splice(deleteCategories, 1);
-            let categories = data.filter((properties) => properties.category === categoryToUppercase);
-            if (categories.length !== 0) {
-                for (let i = 0; i < categories.length; i = i + 1) {
-                    categories[i].category = "";
-                    console.log(`ID ${categories[i].id} unassigned from category ${chalk.hex(green)(`"${categoryToUppercase}"`)}`);
+    .action(() => {
+    function deleteCategories() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let data = readFile();
+            let parsedCategories = readCategories();
+            const category = yield select({
+                message: 'Select the category to be deleted:',
+                choices: parsedCategories
+            });
+            let chosenCategory = parsedCategories.findIndex((categories) => categories.name === category);
+            if (chosenCategory !== -1) {
+                parsedCategories.splice(chosenCategory, 1);
+                let categories = data.filter((properties) => properties.category === category);
+                if (categories.length !== 0) {
+                    for (let i = 0; i < categories.length; i = i + 1) {
+                        categories[i].category = "-";
+                        console.log(`ID ${categories[i].id} unassigned from category ${chalk.hex(green)(`"${category}"`)}`);
+                    }
                 }
+                categoriesData = JSON.stringify(parsedCategories);
+                jsonData = JSON.stringify(data);
+                writeFile();
+                writeCategories();
+                console.log(`\nCategory ${chalk.hex(green)(`"${category}"`)} deleted successfully.`);
             }
-            categoriesData = JSON.stringify(categoriesJson);
-            jsonData = JSON.stringify(data);
-            writeFile();
-            writeCategories();
-            console.log(`Category ${chalk.hex(green)(`"${categoryToUppercase}"`)} deleted successfully.`);
-        }
-        else {
-            console.error(`${chalk.red(`Error: category "${categoryToUppercase}" does not exist\n`)}Run 'expense-tracker category-list' to view existing categories`);
-        }
+        });
     }
-    else {
-        console.error(`${chalk.red(`Error: no category entered\n`)}Sample: expense-tracker category --delete 'Food'`);
-    }
+    deleteCategories();
 })
-    .showHelpAfterError(chalk("Sample: expense-tracker category --delete 'Food'"));
+    .showHelpAfterError(chalk("Sample: expense-tracker category --delete"));
 program
     .command('delete')
     .requiredOption('--id <id>', 'id of expense to be deleted', Number)
@@ -343,7 +343,7 @@ program
                     }
                 }
                 if (table.length === 0) {
-                    console.log(`No expenses recorded (year: ${year})`);
+                    console.log(`\nNo expenses recorded (year: ${year})`);
                 }
                 else {
                     console.log(table.toString());
@@ -368,7 +368,7 @@ program
                     console.log(table.toString());
                 }
                 else {
-                    console.error(`No expenses recorded for the month of ${months[parseInt(month) - 1]} (year: ${year})`);
+                    console.error(`\nNo expenses recorded for the month of ${months[parseInt(month) - 1]} (year: ${year})`);
                 }
             }
             else if (listOptions === 3) {
@@ -388,7 +388,7 @@ program
                     console.log(table.toString());
                 }
                 else {
-                    console.error(`No expenses exist in category - ${category} (year: ${year})`);
+                    console.error(`\nNo expenses exist in category ${chalk.red(`"${category}"`)} (year: ${year})`);
                 }
             }
             if (listOptions === 4) {
@@ -417,7 +417,7 @@ program
                     console.log(table.toString());
                 }
                 else {
-                    console.error(`No expenses exist in category - ${category} for the month of ${months[parseInt(month) - 1]} (year: ${year})`);
+                    console.error(`\nNo expenses exist in category ${chalk.red(`"${category}"`)} for the month of ${months[parseInt(month) - 1]} (year: ${year})`);
                 }
             }
         });
