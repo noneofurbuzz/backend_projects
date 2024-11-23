@@ -50,6 +50,10 @@ function readCategories() {
         return JSON.parse(categoriesData);
     }
 }
+function readCurrency() {
+    let currency = fs.readFileSync('currency.json', 'utf-8');
+    return JSON.parse(currency);
+}
 program
     .name('expense-tracker')
     .description('track your expenses')
@@ -71,7 +75,8 @@ program
         description: options.description,
         amount: options.amount,
         date: new Date().toISOString().slice(0, 10),
-        category: "-"
+        category: "-",
+        currency: data.length === 0 ? "$" : data[0].currency
     });
     jsonData = JSON.stringify(data);
     writeFile();
@@ -99,6 +104,14 @@ program
                     jsonData = JSON.stringify(data);
                     writeFile();
                     console.log(`\nCategory ${chalk.hex(green)(`"${category}"`)} assigned to ID ${data.length}.`);
+                    function currencyDefault() {
+                        let flag = false;
+                        if (flag === false) {
+                            data[0].currency === "$" ? console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`) : console.log("");
+                            flag = true;
+                        }
+                    }
+                    currencyDefault();
                 }
                 else {
                     addCategory();
@@ -118,6 +131,7 @@ program
                     categoriesData = JSON.stringify(parsedCategories);
                     writeCategories();
                     console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${data.length}.`);
+                    data[0].currency === "$" ? console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`) : console.log("");
                 }
                 else {
                     console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`));
@@ -125,6 +139,7 @@ program
                 }
             }
             else {
+                data[0].currency === "$" ? console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`) : console.log("");
                 return;
             }
         });
@@ -339,7 +354,7 @@ program
             if (listOptions === 1) {
                 for (let i = 0; i < data.length; i = i + 1) {
                     if (data[i].date.includes(`${year}-`)) {
-                        table.push([data[i].id, data[i].date, data[i].description, data[i].amount, data[i].category]);
+                        table.push([data[i].id, data[i].date, data[i].description, data[i].currency + data[i].amount, data[i].category]);
                     }
                 }
                 if (table.length === 0) {
@@ -351,7 +366,7 @@ program
             }
             else if (listOptions === 2) {
                 let month = yield input({ message: 'Enter the month number (e.g., 11 for November):' });
-                if (parseInt(month) > 12 || isNaN(parseInt(month))) {
+                if (parseInt(month) > 12 || isNaN(Number(month))) {
                     console.error(chalk.red('Error: no such month exists'));
                     console.error('Please enter a valid month.');
                     return;
@@ -361,7 +376,7 @@ program
                 }
                 for (let i = 0; i < data.length; i = i + 1) {
                     if (data[i].date.includes(`${year}-${month}-`)) {
-                        table.push([data[i].id, data[i].date, data[i].description, data[i].amount, data[i].category]);
+                        table.push([data[i].id, data[i].date, data[i].description, data[i].currency + data[i].amount, data[i].category]);
                     }
                 }
                 if (table.length !== 0) {
@@ -380,7 +395,7 @@ program
                 for (let i = 0; i < data.length; i = i + 1) {
                     if (data[i].date.includes((`${year}-`))) {
                         if (data[i].category === category) {
-                            table.push([data[i].id, data[i].date, data[i].description, data[i].amount, data[i].category]);
+                            table.push([data[i].id, data[i].date, data[i].description, data[i].currency + data[i].amount, data[i].category]);
                         }
                     }
                 }
@@ -393,7 +408,7 @@ program
             }
             if (listOptions === 4) {
                 let month = yield input({ message: 'Enter the month number (e.g., 11 for November):' });
-                if (parseInt(month) > 12 || isNaN(parseInt(month))) {
+                if (parseInt(month) > 12 || isNaN(Number(month))) {
                     console.error(chalk.red('Error: no such month exists'));
                     console.error('Please enter a valid month.');
                     return;
@@ -409,7 +424,7 @@ program
                 for (let i = 0; i < data.length; i = i + 1) {
                     if (data[i].date.includes((`${year}-${month}-`))) {
                         if (data[i].category === category) {
-                            table.push([data[i].id, data[i].date, data[i].description, data[i].amount, data[i].category]);
+                            table.push([data[i].id, data[i].date, data[i].description, data[i].currency + data[i].amount, data[i].category]);
                         }
                     }
                 }
@@ -417,7 +432,7 @@ program
                     console.log(table.toString());
                 }
                 else {
-                    console.error(`\nNo expenses exist in category  ${chalk.red(`"${category}"`)} for the month of ${months[parseInt(month) - 1]} (year: ${year})`);
+                    console.error(`\nNo expenses exist in category ${chalk.red(`"${category}"`)} for the month of ${months[parseInt(month) - 1]} (year: ${year})`);
                 }
             }
         });
@@ -441,6 +456,27 @@ program
     }
 })
     .showHelpAfterError(`Sample: expense-tracker category-list`);
+program
+    .command('currency')
+    .description('change currency')
+    .action(() => {
+    function currency() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let currencyData = readCurrency();
+            let data = readFile();
+            const baseCurrency = yield select({
+                message: "Choose your currency",
+                choices: currencyData,
+            });
+            for (let i = 0; i < data.length; i = i + 1) {
+                data[i].currency = baseCurrency;
+            }
+            jsonData = JSON.stringify(data);
+            writeFile();
+        });
+    }
+    currency();
+});
 program.configureOutput({
     writeErr: (str) => {
         str = str.replace('error:', chalk.red('Error: '));
