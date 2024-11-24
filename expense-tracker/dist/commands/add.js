@@ -33,7 +33,7 @@ export default (options) => {
         currency: data.length === 0 ? " " : data[0].currency
     });
     writeFile(data);
-    console.log(chalk.hex(green)(`Expense added successfully (ID: ${data.length}, Amount: ${data[0].currency === " " ? "$" : data[0].currency}${options.amount}, Description: ${options.description})\n`));
+    console.log(chalk.hex(green)(`Expense added successfully (ID: ${data.length}, Amount: ${data[0].currency === " " ? "$" : data[0].currency}${options.amount}, Description: ${options.description})`));
     function addCategory() {
         return __awaiter(this, void 0, void 0, function* () {
             const answer = yield select({

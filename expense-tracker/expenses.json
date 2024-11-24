@@ -1,13 +1,1 @@
-[
-    {"id":1,"description":"Testing","amount":0,"date":"2023-11-24","category":"Food","currency":"$"},
-    {"id":2,"description":"Lunch","amount":15.5,"date":"2023-11-23","category":"Food","currency":"$"},
-    {"id":3,"description":"Bus Ticket","amount":2.75,"date":"2024-10-15","category":"Transport","currency":"$"},
-    {"id":4,"description":"Groceries","amount":50,"date":"2024-09-10","category":"Shopping","currency":"$"},
-    {"id":5,"description":"Gym Membership","amount":30,"date":"2024-08-01","category":"Health","currency":"$"},
-    {"id":6,"description":"Internet Bill","amount":25,"date":"2024-07-20","category":"Utilities","currency":"$"},
-    {"id":7,"description":"Movie Ticket","amount":12.99,"date":"2024-11-12","category":"Entertainment","currency":"$"},
-    {"id":8,"description":"Dinner","amount":0,"date":"2024-06-05","category":"-","currency":"$"},
-    {"id":9,"description":"Concert Ticket","amount":65,"date":"2024-11-02","category":"Entertainment","currency":"$"},
-    {"id":10,"description":"Electricity Bill","amount":70,"date":"2024-07-25","category":"Utilities","currency":"$"}
-  ]
-  
+[{"id":1,"description":"hi ","amount":87,"date":"2023-11-24","category":"Food","currency":"CA$"},{"id":2,"description":"Lunch","amount":15.5,"date":"2023-11-23","category":"Food","currency":"CA$"},{"id":3,"description":"Gym Membership","amount":30,"date":"2024-08-01","category":"Health","currency":"CA$"},{"id":4,"description":"Internet Bill","amount":25,"date":"2024-07-20","category":"Utilities","currency":"CA$"},{"id":5,"description":"Movie Ticket","amount":12.99,"date":"2024-11-12","category":"Entertainment","currency":"CA$"},{"id":6,"description":"Dinner","amount":0,"date":"2024-06-05","category":"-","currency":"CA$"},{"id":7,"description":"Concert Ticket","amount":65,"date":"2024-11-02","category":"Entertainment","currency":"CA$"},{"id":8,"description":"Electricity Bill","amount":70,"date":"2024-07-25","category":"Utilities","currency":"CA$"},{"id":9,"description":"testing","amount":0,"date":"2024-11-24","category":"Food","currency":"CA$"},{"id":10,"description":"testing","amount":0,"date":"2024-11-24","category":"-","currency":"CA$"}]
