@@ -100,7 +100,6 @@ program
                 });
                 if (category !== "Previous") {
                     data = readFile();
-                    let warned = false;
                     data[data.length - 1].category = category;
                     jsonData = JSON.stringify(data);
                     writeFile();
@@ -110,7 +109,6 @@ program
                     }
                     else {
                         console.log("");
-                        warned = true;
                     }
                 }
                 else {
@@ -120,22 +118,28 @@ program
             else if (answer === 2) {
                 const category = yield input({ message: 'Enter the name of the new category:' });
                 data = readFile();
-                let categoryToUppercase = category.slice(0, 1).toUpperCase() + category.slice(1, category.length).toLowerCase();
-                let parsedCategories = readCategories();
-                let availableCategories = parsedCategories.find((categories) => categoryToUppercase === categories.name);
-                if (availableCategories === undefined) {
-                    data[data.length - 1].category = categoryToUppercase;
-                    jsonData = JSON.stringify(data);
-                    writeFile();
-                    parsedCategories.push({ "name": data[data.length - 1].category, "value": data[data.length - 1].category });
-                    categoriesData = JSON.stringify(parsedCategories);
-                    writeCategories();
-                    console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${data.length}.`);
-                    data[0].currency === " " ? console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`) : console.log("");
+                if (category !== "" && category.trim() !== "") {
+                    let categoryToUppercase = category.slice(0, 1).toUpperCase() + category.slice(1, category.length).toLowerCase();
+                    let parsedCategories = readCategories();
+                    let availableCategories = parsedCategories.find((categories) => categoryToUppercase === categories.name);
+                    if (availableCategories === undefined) {
+                        data[data.length - 1].category = categoryToUppercase;
+                        jsonData = JSON.stringify(data);
+                        writeFile();
+                        parsedCategories.push({ "name": data[data.length - 1].category, "value": data[data.length - 1].category });
+                        categoriesData = JSON.stringify(parsedCategories);
+                        writeCategories();
+                        console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${data.length}.`);
+                        data[0].currency === " " ? console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`) : console.log("");
+                    }
+                    else {
+                        console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`));
+                        addCategory();
+                    }
                 }
                 else {
-                    console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`));
-                    addCategory();
+                    console.error(chalk.red("\nError: no category entered"));
+                    console.error("Please enter a valid category");
                 }
             }
             else {
@@ -216,20 +220,26 @@ program
                         const category = yield input({ message: 'Enter the name of the new category:' });
                         data = readFile();
                         let parsedCategories = readCategories();
-                        let categoryToUppercase = category.slice(0, 1).toUpperCase() + category.slice(1, category.length).toLowerCase();
-                        let availableCategories = parsedCategories.find((categories) => categoryToUppercase === categories.name);
-                        if (availableCategories === undefined) {
-                            data[options.id - 1].category = categoryToUppercase;
-                            jsonData = JSON.stringify(data);
-                            writeFile();
-                            parsedCategories.push({ "name": data[options.id - 1].category, "value": data[options.id - 1].category });
-                            categoriesData = JSON.stringify(parsedCategories);
-                            writeCategories();
-                            console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${options.id}.`);
+                        if (category !== "" && category.trim() !== "") {
+                            let categoryToUppercase = category.slice(0, 1).toUpperCase() + category.slice(1, category.length).toLowerCase();
+                            let availableCategories = parsedCategories.find((categories) => categoryToUppercase === categories.name);
+                            if (availableCategories === undefined) {
+                                data[options.id - 1].category = categoryToUppercase;
+                                jsonData = JSON.stringify(data);
+                                writeFile();
+                                parsedCategories.push({ "name": data[options.id - 1].category, "value": data[options.id - 1].category });
+                                categoriesData = JSON.stringify(parsedCategories);
+                                writeCategories();
+                                console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${options.id}.`);
+                            }
+                            else {
+                                console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`));
+                                updateCategory();
+                            }
                         }
                         else {
-                            console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`));
-                            updateCategory();
+                            console.error(chalk.red("\nError: no category entered"));
+                            console.error("Please enter a valid category");
                         }
                     }
                     else {
@@ -262,7 +272,7 @@ program
     let categoryToUppercase = options.delete.slice(0, 1).toUpperCase() + options.delete.slice(1, options.delete.length).toLowerCase();
     let categoriesJson = readCategories();
     let deleteCategories = categoriesJson.findIndex((categories) => categories.name === categoryToUppercase);
-    if (options.delete !== "") {
+    if (options.delete !== "" && options.delete.trim() !== "") {
         if (deleteCategories !== -1) {
             categoriesJson.splice(deleteCategories, 1);
             let categories = data.filter((properties) => properties.category === categoryToUppercase);
@@ -424,7 +434,7 @@ program
                 for (let i = 0; i < data.length; i = i + 1) {
                     if (data[i].date.includes((`${year}-${month}-`))) {
                         if (data[i].category === category) {
-                            table.push([data[i].id, data[i].date, data[i].description, data[i].currency + data[i].amount, data[i].category]);
+                            table.push([data[i].id, data[i].date, data[i].description, `${data[i].currency !== " " ? data[i].currency + data[i].amount : "$" + data[i].amount}`, data[i].category]);
                         }
                     }
                 }
