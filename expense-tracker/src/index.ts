@@ -126,6 +126,7 @@ program
         else if (answer === 2){
             const category = await input({message: 'Enter the name of the new category:'})
             data = readFile()
+            if (category !== "" && category.trim() !== ""){
             let categoryToUppercase = category.slice(0,1).toUpperCase()+category.slice(1,category.length).toLowerCase()
             let parsedCategories = readCategories()
             let availableCategories = parsedCategories.find((categories) => categoryToUppercase === categories.name )
@@ -141,6 +142,10 @@ program
             }else{
                 console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`))
                 addCategory()
+            }}
+            else{
+                console.error(chalk.red("\nError: no category entered"))
+                console.error("Please enter a valid category")
             }
             
         }
@@ -225,20 +230,27 @@ program
             const category = await input({message: 'Enter the name of the new category:'})
             data = readFile()
             let parsedCategories = readCategories()
-            let categoryToUppercase = category.slice(0,1).toUpperCase()+category.slice(1,category.length).toLowerCase()
-            let availableCategories = parsedCategories.find((categories) => categoryToUppercase === categories.name)
-            if (availableCategories === undefined){
-                data[options.id - 1].category = categoryToUppercase
-                jsonData = JSON.stringify(data)
-                writeFile()
-            parsedCategories.push({"name":data[options.id - 1].category,"value":data[options.id - 1].category})
-            categoriesData = JSON.stringify(parsedCategories)
-            writeCategories()
-            console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${options.id}.`)}
-            else{
-                console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`))
-                updateCategory()
+            if (category !== "" && category.trim() !== ""){
+                let categoryToUppercase = category.slice(0,1).toUpperCase()+category.slice(1,category.length).toLowerCase()
+                let availableCategories = parsedCategories.find((categories) => categoryToUppercase === categories.name)
+                if (availableCategories === undefined){
+                    data[options.id - 1].category = categoryToUppercase
+                    jsonData = JSON.stringify(data)
+                    writeFile()
+                parsedCategories.push({"name":data[options.id - 1].category,"value":data[options.id - 1].category})
+                categoriesData = JSON.stringify(parsedCategories)
+                writeCategories()
+                console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${options.id}.`)}
+                else{
+                    console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`))
+                    updateCategory()
+                }
             }
+            else{
+                console.error(chalk.red("\nError: no category entered"))
+                console.error("Please enter a valid category")
+            }
+          
             }
             else {
                 data = readFile()
@@ -271,7 +283,7 @@ program
         let categoryToUppercase = options.delete.slice(0,1).toUpperCase()+options.delete.slice(1,options.delete.length).toLowerCase()
         let categoriesJson = readCategories()
         let deleteCategories = categoriesJson.findIndex((categories) => categories.name ===  categoryToUppercase)
-        if(options.delete !== ""){
+        if(options.delete !== "" && options.delete.trim() !== ""){
             if (deleteCategories !== -1){
                 categoriesJson.splice(deleteCategories,1)
                 let categories = data.filter((properties) => properties.category === categoryToUppercase)
