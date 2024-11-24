@@ -26,7 +26,7 @@ export default (options : {description: string, amount:number}) => {
 
     })
     writeFile(data)
-    console.log(chalk.hex(green)(`Expense added successfully (ID: ${data.length}, Amount: ${data[0].currency === " " ? "$": data[0].currency}${options.amount}, Description: ${options.description})\n`))
+    console.log(chalk.hex(green)(`Expense added successfully (ID: ${data.length}, Amount: ${data[0].currency === " " ? "$": data[0].currency}${options.amount}, Description: ${options.description})`))
     async function addCategory(){
         const answer = await select({
         message: 'This expense has no category assigned. Would you like to assign one now?',
