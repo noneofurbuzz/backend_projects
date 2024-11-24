@@ -1,1 +1,13 @@
-[{"id":1,"description":"98h","amount":0,"date":"2024-11-24","category":"-","currency":"$"},{"id":2,"description":"testing","amount":5,"date":"2024-11-24","category":"Transport","currency":"$"},{"id":3,"description":"testing","amount":5,"date":"2024-11-24","category":"Food","currency":"$"},{"id":4,"description":"testing","amount":5,"date":"2024-11-24","category":"Kjh","currency":"$"},{"id":5,"description":"testing","amount":5,"date":"2024-11-24","category":"","currency":"$"},{"id":6,"description":"testing","amount":5,"date":"2024-11-24","category":"Food","currency":"$"},{"id":7,"description":"testing","amount":5,"date":"2024-11-24","category":"-","currency":"$"},{"id":8,"description":"testing","amount":5,"date":"2024-11-24","category":"-","currency":"$"},{"id":9,"description":"testing","amount":0,"date":"2024-11-24","category":"-","currency":"$"},{"id":10,"description":"testing","amount":0,"date":"2024-11-24","category":"-","currency":"$"},{"id":11,"description":"testing","amount":0,"date":"2024-11-24","category":"-","currency":"$"},{"id":12,"description":"testing","amount":0,"date":"2024-11-24","category":"-","currency":"$"},{"id":13,"description":"testing","amount":0,"date":"2024-11-24","category":"-","currency":"$"}]
+[
+    {"id":1,"description":"Testing","amount":0,"date":"2023-11-24","category":"Food","currency":"$"},
+    {"id":2,"description":"Lunch","amount":15.5,"date":"2023-11-23","category":"Food","currency":"$"},
+    {"id":3,"description":"Bus Ticket","amount":2.75,"date":"2024-10-15","category":"Transport","currency":"$"},
+    {"id":4,"description":"Groceries","amount":50,"date":"2024-09-10","category":"Shopping","currency":"$"},
+    {"id":5,"description":"Gym Membership","amount":30,"date":"2024-08-01","category":"Health","currency":"$"},
+    {"id":6,"description":"Internet Bill","amount":25,"date":"2024-07-20","category":"Utilities","currency":"$"},
+    {"id":7,"description":"Movie Ticket","amount":12.99,"date":"2024-11-12","category":"Entertainment","currency":"$"},
+    {"id":8,"description":"Dinner","amount":0,"date":"2024-06-05","category":"-","currency":"$"},
+    {"id":9,"description":"Concert Ticket","amount":65,"date":"2024-11-02","category":"Entertainment","currency":"$"},
+    {"id":10,"description":"Electricity Bill","amount":70,"date":"2024-07-25","category":"Utilities","currency":"$"}
+  ]
+  
