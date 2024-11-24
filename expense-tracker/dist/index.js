@@ -76,7 +76,7 @@ program
         amount: options.amount,
         date: new Date().toISOString().slice(0, 10),
         category: "-",
-        currency: data.length === 0 ? "$" : data[0].currency
+        currency: data.length === 0 ? " " : data[0].currency
     });
     jsonData = JSON.stringify(data);
     writeFile();
@@ -100,18 +100,18 @@ program
                 });
                 if (category !== "Previous") {
                     data = readFile();
+                    let warned = false;
                     data[data.length - 1].category = category;
                     jsonData = JSON.stringify(data);
                     writeFile();
                     console.log(`\nCategory ${chalk.hex(green)(`"${category}"`)} assigned to ID ${data.length}.`);
-                    function currencyDefault() {
-                        let flag = false;
-                        if (flag === false) {
-                            data[0].currency === "$" ? console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`) : console.log("");
-                            flag = true;
-                        }
+                    if (data[0].currency === " ") {
+                        console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`);
                     }
-                    currencyDefault();
+                    else {
+                        console.log("");
+                        warned = true;
+                    }
                 }
                 else {
                     addCategory();
@@ -131,7 +131,7 @@ program
                     categoriesData = JSON.stringify(parsedCategories);
                     writeCategories();
                     console.log(`\nCategory ${chalk.hex(green)(`"${categoryToUppercase}"`)} created and assigned to ID ${data.length}.`);
-                    data[0].currency === "$" ? console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`) : console.log("");
+                    data[0].currency === " " ? console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`) : console.log("");
                 }
                 else {
                     console.error(chalk.red(`\nError: category "${categoryToUppercase}" already exists\n`));
@@ -139,7 +139,7 @@ program
                 }
             }
             else {
-                data[0].currency === "$" ? console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`) : console.log("");
+                data[0].currency === " " ? console.log(`\nNB: Currency is automatically displayed in dollars. To change the default currency settings run 'expense-tracker currency'`) : console.log("");
                 return;
             }
         });
@@ -354,7 +354,7 @@ program
             if (listOptions === 1) {
                 for (let i = 0; i < data.length; i = i + 1) {
                     if (data[i].date.includes(`${year}-`)) {
-                        table.push([data[i].id, data[i].date, data[i].description, data[i].currency + data[i].amount, data[i].category]);
+                        table.push([data[i].id, data[i].date, data[i].description, `${data[i].currency !== " " ? data[i].currency + data[i].amount : "$" + data[i].amount}`, data[i].category]);
                     }
                 }
                 if (table.length === 0) {
@@ -376,7 +376,7 @@ program
                 }
                 for (let i = 0; i < data.length; i = i + 1) {
                     if (data[i].date.includes(`${year}-${month}-`)) {
-                        table.push([data[i].id, data[i].date, data[i].description, data[i].currency + data[i].amount, data[i].category]);
+                        table.push([data[i].id, data[i].date, data[i].description, `${data[i].currency !== " " ? data[i].currency + data[i].amount : "$" + data[i].amount}`, data[i].category]);
                     }
                 }
                 if (table.length !== 0) {
@@ -395,7 +395,7 @@ program
                 for (let i = 0; i < data.length; i = i + 1) {
                     if (data[i].date.includes((`${year}-`))) {
                         if (data[i].category === category) {
-                            table.push([data[i].id, data[i].date, data[i].description, data[i].currency + data[i].amount, data[i].category]);
+                            table.push([data[i].id, data[i].date, data[i].description, `${data[i].currency !== " " ? data[i].currency + data[i].amount : "$" + data[i].amount}`, data[i].category]);
                         }
                     }
                 }
