@@ -76,6 +76,10 @@ program
             console.error((chalk("Sample: expense-tracker add --description 'Lunch' --amount 20")))
             return
         }
+        if (options.description.trim() === ""){
+            console.error(chalk.red("Error: description cannot be empty"))
+            return
+        }
         data.push({
             id: data.length+1,
             description: options.description,
@@ -170,6 +174,10 @@ program
         if (isNaN(options.id)){
             console.error(chalk.red("Error: ID must be a number"))
             console.error((chalk("Sample: expense-tracker update --id 1 --description 'Breakfast' --amount 30")))
+            return
+        }
+        if (options.description !== undefined && options.description.trim() === "" ){
+            console.error(chalk.red("Error: description cannot be empty"))
             return
         }
         if (options.amount !== undefined && isNaN(options.amount)){
