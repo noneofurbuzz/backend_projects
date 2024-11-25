@@ -26,7 +26,7 @@ export default (option : {year?: string | undefined}) => {
     }
         let data = readFile()
         if (data.length === 0){
-            console.error('There are no expenses yet. Use add [options] to add a new expense.')
+            console.error(`There are no expenses yet. Use 'expense-tracker add [options]'' to add a new expense.`)
             console.error(("Sample: expense-tracker add --description 'Lunch' --amount 20"))
             return
         }
