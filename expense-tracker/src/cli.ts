@@ -7,6 +7,7 @@ import deleteExpense from './commands/deleteExpense.js';
 import listExpenses from './commands/listExpenses.js';
 import catogoryList from './commands/catogory-list.js';
 import currency from './commands/currency.js';
+import exportToCSV from './commands/exportToCSV.js';
 
 program
     .name('expense-tracker')
@@ -60,7 +61,11 @@ program
     .command('currency')
     .description('change currency')
     .action(() => {currency()})
-  
+program
+    .command('export <file_path>')
+    .description('export to a csv file')
+    .action((file_path) => exportToCSV(file_path))
+    .showHelpAfterError(`Sample: expense-tracker export expenses.csv`)
 program.configureOutput({
     writeErr: (str) => {
         str = str.replace('error:',chalk.red('Error: '))

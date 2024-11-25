@@ -1,6 +1,5 @@
 import { readFile,writeFile } from '../utils/expensesUtils.js';
 import chalk from 'chalk'
-import { readCategories,writeCategories } from '../utils/categoriesUtils.js';
 import { green } from '../constants.js';
 
 export default (options: {id:number}) => {
