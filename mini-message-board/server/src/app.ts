@@ -1,6 +1,5 @@
 import express, { response } from 'express'
 import cors from 'cors'
-import axios from 'axios'
 import { messages } from './types.ts'
 const app = express()
 app.use(cors())
@@ -18,7 +17,20 @@ const messages: messages[] = [
         text: "Hello Worldjkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjjjjjjjjjjjjjjjjjjjjgggggggggggggggggggggggggggggg!",
         user: "Charles",
         added: new Date()
-      }
+      },
+      {
+        id: 3,
+        text: "Hello World!",
+        user: "Ugochi",
+        added: new Date()
+      },
+      {
+        id: 4,
+        text: "Hello World!",
+        user: "Ugochi",
+        added: new Date()
+      },
+
 ]
 
 app.get('/',(req,res) => {
