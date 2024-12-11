@@ -6,30 +6,7 @@ app.use(cors())
 const port = process.env.PORT
 
 const messages: messages[] = [
-    {
-        id : 1,
-        text: "Hi there!",
-        user: "Amando",
-        added: new Date()
-      },
-      {
-        id: 2,
-        text: "Hello Worldjkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjjjjjjjjjjjjjjjjjjjjgggggggggggggggggggggggggggggg!",
-        user: "Charles",
-        added: new Date()
-      },
-      {
-        id: 3,
-        text: "Hello World!",
-        user: "Ugochi",
-        added: new Date()
-      },
-      {
-        id: 4,
-        text: "Hello World!",
-        user: "Ugochi",
-        added: new Date()
-      },
+    
 
 ]
 

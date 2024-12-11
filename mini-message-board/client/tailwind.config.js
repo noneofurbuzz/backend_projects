@@ -8,7 +8,8 @@ export default {
     extend: {
       fontFamily: {
         grotesk: ["Space Grotesk", "sans-serif"],
-        host: ["Host Grotesk", "sans-serif"]
+        host: ["Host Grotesk", "sans-serif"],
+        neue: ["neue","sans-serif"]
       },
     },
   },
