@@ -3,9 +3,10 @@ import { getUserImage, getUserTime } from "../helpers"
 import api from "../api"
 import { NoMessages } from "../pages/NoMessages"
 import { Loader } from "./loader"
+import { useContext } from "react"
+import { FormContext } from "../context/FormContext"
 
 export function Messages(){
-
     const {data: images} = useQuery(
         { queryFn: getUserImage,
           queryKey: ["images"],

@@ -18,7 +18,13 @@ const messages: messages[] = [
           text: "Hello World!",
           user: "Charles",
           added: new Date()
-        }
+        },
+        {
+        id:3,
+        text: "Hello World!",
+        user: "Charles",
+        added: new Date()
+      },
       ];
       
 
