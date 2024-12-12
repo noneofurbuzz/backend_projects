@@ -1,3 +1,5 @@
+import api from "./api"
+
 export function getUserTime(date: Date){
     const time = new Date()
     const timeAdded = new Date(date)
@@ -54,6 +56,15 @@ export function getUserTime(date: Date){
 }
 
 export function getUserImage(){
-    return `https://rickandmortyapi.com/api/character/avatar/${Math.floor(Math.random() * 826) + 1}.jpeg`
+  let imagesData: string[] = []
+  api().then((data) => {
+    if (data !== null){
+      for (let i = 0; i < data.length; i = i + 1){
+        imagesData.push(`https://rickandmortyapi.com/api/character/avatar/${Math.floor(Math.random() * 826) + 1}.jpeg`)
+      }
+      
+    }
+  })
+    return imagesData
     }
   
