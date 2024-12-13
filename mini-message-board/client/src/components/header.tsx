@@ -1,11 +1,11 @@
 import { useContext } from "react"
-import { FormContext } from "../context/FormContext"
+import { FormContext } from "../context/formContext"
 
 export function Header(){
   const {setShowForm} = useContext(FormContext)
     return(
         <header>
-        <div className="grid-cols bg-black mb-4 sm:grid flex sm:grid-cols-3 py-3 gap-2 px-8 sm:px-0 items-center justify-between sm:justify-normal">
+        <div className={`grid-cols  bg-black mb-4 sm:grid flex sm:grid-cols-3 py-3 gap-2 px-8 sm:px-0 items-center justify-between sm:justify-normal`}>
         <div className="hidden sm:block"></div>
         <h1 className="text-white justify-self-center font-grotesk uppercase tracking-widest ">messageboard</h1>
         <button className="bg-white justify-self-end mr-4 py-2 px-2 rounded-xl font-semibold sm:block hidden" onClick={() => setShowForm(true)}>New message</button>

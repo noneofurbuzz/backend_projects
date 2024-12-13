@@ -8,4 +8,4 @@ export default () => axios.get('http://localhost:3000/').then((response: AxiosRe
   }).catch((error: Error | AxiosError) => {
     console.log(error.message)
     return null
-  })
+  })    

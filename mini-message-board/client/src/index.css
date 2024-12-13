@@ -11,8 +11,16 @@ body{
 .box-shadow{
   box-shadow: 0px 5px 2px #B570AB;
 }
-
+.input-shadow{
+  box-shadow: rgba(210, 212, 222, 0.85) 0px 0.5px 1.5px
+}
 @font-face {
   font-family: neue;
   src: url('/assets/fonts/neue/NeueMontreal-Regular.otf');
 }
+
+@font-face {
+  font-family: code-saver;
+  src: url('/assets/fonts/code-saver/CodeSaver-Regular.otf');
+}
+
