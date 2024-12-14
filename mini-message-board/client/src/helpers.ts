@@ -1,4 +1,4 @@
-import api from "./api"
+import { getMessages } from "./api"
 
 export function getUserTime(date: Date){
     const time = new Date()
@@ -57,7 +57,7 @@ export function getUserTime(date: Date){
 
 export function getUserImage(){
   let imagesData: string[] = []
-  api().then((data) => {
+  getMessages().then((data) => {
     if (data !== null){
       for (let i = 0; i < data.length; i = i + 1){
         imagesData.push(`https://rickandmortyapi.com/api/character/avatar/${Math.floor(Math.random() * 826) + 1}.jpeg`)
