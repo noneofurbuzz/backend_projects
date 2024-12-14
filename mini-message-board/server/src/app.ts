@@ -5,28 +5,8 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 const port = process.env.PORT
-
-const messages: messages[] = [
-    
-        {
-            id: 1,
-          text: "Hi there!",
-          user: "Amando",
-          added: new Date()
-        },
-        {
-        id:2,
-          text: "Hello World!",
-          user: "Charles",
-          added: new Date()
-        },
-        {
-        id:3,
-        text: "Hello World!",
-        user: "Charles",
-        added: new Date()
-      },
-      ];
+let id = 1
+const messages: messages[] = [];
       
 
 app.get('/',(req,res) => {
@@ -34,6 +14,13 @@ app.get('/',(req,res) => {
     console.log(messages)
 })
 app.post('/new',(req,res) => {
+  messages.push({
+    id : id ++,
+    text: req.body.message,
+    user: req.body.name,
+    image: `https://rickandmortyapi.com/api/character/avatar/${Math.floor(Math.random() * 826) + 1}.jpeg`,
+    added: new Date()
+  })
   res.status(200).send()
   console.log(req.body)
 })

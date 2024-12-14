@@ -16,7 +16,11 @@ export function Form(){
     function handleSubmit(e: SyntheticEvent){
         e.preventDefault()
         mutation.mutate(formData)
-        
+        setShowForm(false)
+        setFormData({
+            name: "",
+            message: ""
+        })
     }
     function handleChange(e:SyntheticEvent){
         setFormData({

@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { FormProvider } from './context/FormContext.tsx'
+import { FormProvider } from './context/formContext.tsx'
 
 const queryClient = new QueryClient()
 

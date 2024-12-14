@@ -1,5 +1,3 @@
-import { getMessages } from "./api"
-
 export function getUserTime(date: Date){
     const time = new Date()
     const timeAdded = new Date(date)
@@ -9,7 +7,7 @@ export function getUserTime(date: Date){
       if (timeInBetween < 10){
         return `less than 10 seconds`
       }
-      return `${timeInBetween} seconds`
+      return `less than a minute`
     }
     else if (Math.floor(timeInBetween/60000) < 60){
       timeInBetween = Math.floor(timeInBetween/60000)
@@ -54,17 +52,4 @@ export function getUserTime(date: Date){
       return `${timeInBetween} years`
     }
 }
-
-export function getUserImage(){
-  let imagesData: string[] = []
-  getMessages().then((data) => {
-    if (data !== null){
-      for (let i = 0; i < data.length; i = i + 1){
-        imagesData.push(`https://rickandmortyapi.com/api/character/avatar/${Math.floor(Math.random() * 826) + 1}.jpeg`)
-      }
-      
-    }
-  })
-    return imagesData
-    }
   
