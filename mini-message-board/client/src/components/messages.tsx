@@ -8,7 +8,7 @@ import { PaginationContext } from "@/context/paginationContext"
 
 
 export function Messages(){
-    const {currentPageNumber,setCurrentPageNumber} = useContext(PaginationContext)
+    const {currentPageNumber} = useContext(PaginationContext)
     const {data: messages,isLoading} = useQuery({
         queryFn: getMessages,
         queryKey: ["messages"],

@@ -15,7 +15,6 @@ import { PaginationContext } from "@/context/paginationContext";
 
 export function MessagePagination(){
   const {currentPageNumber,setCurrentPageNumber} = useContext(PaginationContext)
-  let paginationLimit = 0
     const {data: messages, isLoading} = useQuery({
       queryFn:getMessages,
       queryKey:["messages"]
@@ -46,7 +45,7 @@ export function MessagePagination(){
       }
     }
     return(
-       !isLoading ? <Pagination>
+       !isLoading ? <Pagination className="">
             <PaginationContent>
                 <PaginationItem>
                 <PaginationPrevious href="#" onClick={previousNumber}/>

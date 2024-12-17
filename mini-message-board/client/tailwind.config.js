@@ -29,7 +29,9 @@ export default {
   			'filter': 'hsla(0, 100%, 0%,0.6)'
   		},
   		screens: {
-  			'990': '990px'
+  			'990': '990px',
+			'480':'480px',
+			'360': '360px'
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

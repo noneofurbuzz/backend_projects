@@ -36,7 +36,7 @@ export function Form(){
 
     return(
         <section className={`${showForm ? 'flex' : 'hidden'}`}>
-        <form className={`font-host grayscale-0 bg-white rounded-xl w-full  py-8 px-6 flex  flex-col`} onSubmit={handleSubmit}>
+        <form className={`font-host h-screen 360:h-full grayscale-0 bg-white 360:rounded-xl w-full  py-8 px-6 flex  flex-col`} onSubmit={handleSubmit}>
             <p className="font-bold text-[1.163rem] leading-nomal">Send a message!</p>
             <p className="text-[#545465] mt-2 mb-4 text-sm">Your Voice Matters – Share It with the World.</p>
             <label htmlFor="name" className="text-[0.94rem] mb-2 leading-[2.4rem]">Name</label>
