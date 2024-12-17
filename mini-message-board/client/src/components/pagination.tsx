@@ -15,12 +15,12 @@ import { PaginationContext } from "@/context/paginationContext";
 
 export function MessagePagination(){
   const {currentPageNumber,setCurrentPageNumber} = useContext(PaginationContext)
-
+  let paginationLimit = 0
     const {data: messages, isLoading} = useQuery({
       queryFn:getMessages,
       queryKey:["messages"]
     })
-    const paginationData: pagination[] = [];
+    let paginationData: pagination[] = [];
     let id = 1
     if (messages){
     let length = messages.length !== 0 ? (messages.length)%6 !==0 ? Math.floor(messages.length/6 + 1) : messages.length/6 : 1
@@ -51,16 +51,14 @@ export function MessagePagination(){
                 <PaginationItem>
                 <PaginationPrevious href="#" onClick={previousNumber}/>
                 </PaginationItem>
-                {paginationData ? paginationData.map((number) => {
-                  if (number.id > 3){
-                    
-                  }else{
+                {paginationData ? (currentPageNumber > 2 ? (currentPageNumber > (paginationData.length - 1) ?paginationData.slice((currentPageNumber -1)-2):paginationData.slice(currentPageNumber-2)) : paginationData.slice(0)).map((number,index) => {
+                  if (index < 3){
                   return (
                   <PaginationItem key={number.id} >
                   <PaginationLink href="#" onClick={() => handleClick(number.id)} isActive = {currentPageNumber === number.id ? true : false}>{number.number}</PaginationLink>
                   </PaginationItem>
                   )}
-                }) : ""}
+                  }) : ""}
                 {currentPageNumber !== paginationData.length ? <PaginationItem>
                 <PaginationEllipsis />
                 </PaginationItem> : ""}
