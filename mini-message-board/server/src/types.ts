@@ -5,3 +5,7 @@ export type messages = {
     image: string
     added: Date,
 }
+export type pagination = {
+    number:number
+    id:number
+}

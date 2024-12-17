@@ -11,7 +11,6 @@ const port = process.env.PORT
 
 app.use('/',indexRouter)
 app.use('/new',newMessagesRouter)
-
 app.get('*',(req,res) => {
   res.status(404).send('Not Found')
 })

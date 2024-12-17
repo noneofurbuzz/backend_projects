@@ -2,9 +2,11 @@ import { SyntheticEvent, useContext, useState } from "react"
 import { FormContext } from "../context/formContext"
 import { useMutation } from "react-query"
 import { postMessages } from "../api"
+import { PaginationContext } from "@/context/paginationContext"
 
 export function Form(){
     const {showForm, setShowForm} = useContext(FormContext)
+    const {setCurrentPageNumber} = useContext(PaginationContext)
     
     const [formData,setFormData] = useState({
         name: "",
@@ -13,6 +15,7 @@ export function Form(){
     const mutation = useMutation({
         mutationFn: (formData:{name:string,message:string}) => postMessages(formData),
     })
+
     function handleSubmit(e: SyntheticEvent){
         e.preventDefault()
         mutation.mutate(formData)
@@ -21,7 +24,9 @@ export function Form(){
             name: "",
             message: ""
         })
+        setCurrentPageNumber(1)
     }
+
     function handleChange(e:SyntheticEvent){
         setFormData({
             ...formData,

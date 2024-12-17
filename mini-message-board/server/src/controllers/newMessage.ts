@@ -1,8 +1,8 @@
 import { Request,Response } from "express"
 import messages from "../data.ts"
 
+let id = 1
 const postMessages = ((req: Request,res: Response) => {
-    let id = 1
     messages.push({
         id : id ++,
         text: req.body.message,

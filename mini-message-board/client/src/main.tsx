@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { FormProvider } from './context/formContext.tsx'
+import { PaginationProvider } from './context/paginationContext.tsx'
 
 const queryClient = new QueryClient()
 
@@ -11,7 +12,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <FormProvider>
-      <App />
+        <PaginationProvider>
+          <App />
+        </PaginationProvider>
       </FormProvider>
     </QueryClientProvider>
   </StrictMode>,

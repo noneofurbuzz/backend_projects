@@ -3,9 +3,12 @@ import { getMessages } from "../api"
 import { NoMessages } from "../pages/NoMessages"
 import { Loader } from "./loader"
 import { getUserTime } from "../helpers"
+import { useContext } from "react"
+import { PaginationContext } from "@/context/paginationContext"
 
 
 export function Messages(){
+    const {currentPageNumber,setCurrentPageNumber} = useContext(PaginationContext)
     const {data: messages,isLoading} = useQuery({
         queryFn: getMessages,
         queryKey: ["messages"],
@@ -15,7 +18,7 @@ export function Messages(){
     return(
         isLoading ? <div className="absolute top-1/2 w-full"><Loader/></div> :
         messages ? 
-        messages.length !== 0 ? messages.map((message) => {
+        messages.length !== 0 ? messages.slice((currentPageNumber * 6)-6,(currentPageNumber * 6)).map((message) => {
             return( 
             <main key={message.id} className="flex justify-center">
             <section  className="box-shadow border-2 rounded-2xl px-5 mx-8 border-black mb-4 flex max-w-[48rem] w-full  bg-[#FF7F00]">

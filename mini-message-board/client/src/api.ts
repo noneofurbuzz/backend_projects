@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios"
-import {messages} from '@backend/types.ts'
+import {messages, pagination} from '@backend/types.ts'
 
 
 export function getMessages(){
