@@ -1,3 +1,5 @@
+import { z } from "zod"
+
 export type messages = {
     id: number
     text: string
