@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import indexRouter from './routes/index.ts'
 import newMessagesRouter from './routes/newMessage.ts'
-import errorHandler from './middleware/index.ts'
+import errorHandler from './middleware/errorHandler.ts'
 
 const app = express()
 app.use(cors())

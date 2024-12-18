@@ -10,7 +10,7 @@ const postMessages = ((req: Request,res: Response) => {
         image: `https://rickandmortyapi.com/api/character/avatar/${Math.floor(Math.random() * 826) + 1}.jpeg`,
         added: new Date()
       })
-      res.status(200).send()
+      res.status(200).send('Message sent!')
 })
 
 export default postMessages
